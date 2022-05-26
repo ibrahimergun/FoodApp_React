@@ -1,45 +1,47 @@
-import { useContext, useEffect, useState } from 'react';
-
-import CartIcon from '../Cart/CartIcon';
+import React, { useContext, useEffect, useState } from 'react';
 import CartContext from '../../store/cart-context';
-import classes from './HeaderCartButton.module.css';
+import CartIcon from '../Cart/CartIcon';
+import Styles from './HeaderCartButton.module.css';
 
 const HeaderCartButton = (props) => {
-  const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
-  const cartCtx = useContext(CartContext);
+  const cartContextProvider = useContext(CartContext);
 
-  const { items } = cartCtx;
+  const [buttonAnimation, setButtonAnimation] = useState(false);
 
-  const numberOfCartItems = items.reduce((curNumber, item) => {
-    return curNumber + item.amount;
-  }, 0);
+  console.log(cartContextProvider);
 
-  const btnClasses = `${classes.button} ${btnIsHighlighted ? classes.bump : ''}`;
+  const numberofCartContext = cartContextProvider.items.reduce(
+    (curNumber, item) => {
+      return curNumber + item.amount;
+    },
+    0,
+  );
+
+  const btnClasses = `${Styles.button} ${buttonAnimation ? Styles.bump : ''}`;
 
   useEffect(() => {
-    if (items.length === 0) {
+    if (cartContextProvider.items.length === 0) {
       return;
     }
-    setBtnIsHighlighted(true);
+    setButtonAnimation(true);
 
     const timer = setTimeout(() => {
-      setBtnIsHighlighted(false);
+      setButtonAnimation(false);
     }, 300);
 
     return () => {
       clearTimeout(timer);
     };
-  }, [items]);
+  }, [cartContextProvider]);
 
   return (
     <button className={btnClasses} onClick={props.onClick}>
-      <span className={classes.icon}>
+      <span className={Styles.icon}>
         <CartIcon />
       </span>
       <span>Your Cart</span>
-      <span className={classes.badge}>{numberOfCartItems}</span>
+      <span className={Styles.badge}>{numberofCartContext}</span>
     </button>
   );
 };
-
 export default HeaderCartButton;
